@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Provider {
+  id           String   @id @default(cuid())
+  name         String
+  type         String   // openai, anthropic, elevenlabs, google
+  apiKey       String   // encrypted
+  enabled      Boolean  @default(true)
+  lastFetched  DateTime?
+  lastData     String?  // JSON string of last fetched data
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model UsageLog {
+  id         String   @id @default(cuid())
+  providerId String
+  data       String   // JSON
+  fetchedAt  DateTime @default(now())
+}
