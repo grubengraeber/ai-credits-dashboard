@@ -57,7 +57,6 @@ export default function Dashboard() {
   };
 
   const handleSignOut = async () => {
-    sessionStorage.removeItem("encryptionPassword");
     await authClient.signOut();
     router.push("/login");
     router.refresh();

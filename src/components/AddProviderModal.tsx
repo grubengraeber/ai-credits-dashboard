@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import { encrypt } from "@/lib/crypto";
 
 interface Props {
   onClose: () => void;
@@ -28,27 +27,10 @@ export function AddProviderModal({ onClose, onAdded }: Props) {
     setLoading(true);
     setError("");
 
-    // Client-seitige Verschlüsselung: API Key wird VOR dem Senden verschlüsselt
-    const encPassword = sessionStorage.getItem("encryptionPassword");
-    if (!encPassword) {
-      setError("Encryption key not available. Please re-login.");
-      setLoading(false);
-      return;
-    }
-
-    let encryptedKey: string;
-    try {
-      encryptedKey = await encrypt(apiKey, encPassword);
-    } catch {
-      setError("Encryption failed");
-      setLoading(false);
-      return;
-    }
-
     const res = await fetch("/api/providers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, type, apiKey: encryptedKey }),
+      body: JSON.stringify({ name, type, apiKey }),
     });
 
     if (res.ok) {
@@ -110,7 +92,7 @@ export function AddProviderModal({ onClose, onAdded }: Props) {
               className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
               required
             />
-            <p className="text-xs text-zinc-500 mt-1">🔒 Verschlüsselt im Browser, Server sieht nie den Klartext</p>
+            <p className="text-xs text-zinc-500 mt-1">🔒 Encrypted at rest on the server</p>
           </div>
 
           {error && <p className="text-red-400 text-sm">{error}</p>}

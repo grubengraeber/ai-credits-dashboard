@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { provider } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { encryptServerSide } from "@/lib/server-crypto";
 
 async function getSession() {
   return await auth.api.getSession({ headers: await headers() });
@@ -37,10 +38,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  // API Key kommt bereits client-seitig verschlüsselt an
+  // Encrypt API key server-side before storing
+  const encryptedKey = encryptServerSide(apiKey);
   const [created] = await db
     .insert(provider)
-    .values({ name, type, apiKey })
+    .values({ name, type, apiKey: encryptedKey })
     .returning({ id: provider.id, name: provider.name, type: provider.type });
 
   return NextResponse.json(created);
