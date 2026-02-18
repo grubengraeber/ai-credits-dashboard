@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,24 +15,27 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const res = await signIn("credentials", {
+
+    const { error: authError } = await authClient.signIn.email({
       email,
       password,
-      redirect: false,
     });
+
     setLoading(false);
-    if (res?.error) {
-      setError("Invalid credentials");
+    if (authError) {
+      setError("Ungültige Anmeldedaten");
     } else {
+      // Passwort im sessionStorage speichern für Token-Verschlüsselung
+      sessionStorage.setItem("encryptionPassword", password);
       router.push("/");
       router.refresh();
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-sm p-8 bg-zinc-900 rounded-2xl border border-zinc-800 shadow-2xl">
-        <h1 className="text-2xl font-bold mb-1">AI Credits Dashboard</h1>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-sm p-6 sm:p-8 bg-zinc-900 rounded-2xl border border-zinc-800 shadow-2xl">
+        <h1 className="text-xl sm:text-2xl font-bold mb-1">AI Credits Dashboard</h1>
         <p className="text-zinc-400 text-sm mb-6">Sign in to continue</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

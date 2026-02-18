@@ -40,41 +40,40 @@ export function ProviderCard({ provider, onDelete, onRefresh }: Props) {
   };
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-700 transition">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl sm:rounded-2xl overflow-hidden hover:border-zinc-700 transition">
       {/* Header gradient */}
-      <div className={`bg-gradient-to-r ${color} px-5 py-4 flex items-center justify-between`}>
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">{icon}</span>
+      <div className={`bg-gradient-to-r ${color} px-4 sm:px-5 py-3 sm:py-4 flex items-center justify-between`}>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="text-xl sm:text-2xl">{icon}</span>
           <div>
-            <h3 className="font-bold text-lg">{provider.name}</h3>
-            <p className="text-sm text-white/60 capitalize">{provider.type}</p>
+            <h3 className="font-bold text-base sm:text-lg">{provider.name}</h3>
+            <p className="text-xs sm:text-sm text-white/60 capitalize">{provider.type}</p>
           </div>
         </div>
         <div className="flex gap-1">
-          <button onClick={onRefresh} className="p-2 hover:bg-white/20 rounded-lg transition">
+          <button onClick={onRefresh} className="p-1.5 sm:p-2 hover:bg-white/20 rounded-lg transition">
             <RefreshCw className="w-4 h-4" />
           </button>
-          <button onClick={onDelete} className="p-2 hover:bg-red-500/40 rounded-lg transition">
+          <button onClick={onDelete} className="p-1.5 sm:p-2 hover:bg-red-500/40 rounded-lg transition">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Body */}
-      <div className="p-5 space-y-4">
+      <div className="p-4 sm:p-5 space-y-3 sm:space-y-4">
         {data?.error ? (
           <div className="flex items-center gap-2 text-red-400">
-            <AlertCircle className="w-4 h-4" />
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span className="text-sm">{data.error}</span>
           </div>
         ) : data ? (
           <>
-            {/* ElevenLabs - Character usage */}
             {data.creditsUsed !== undefined && data.creditsTotal !== undefined && (
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-zinc-400">Characters Used</span>
-                  <span className="font-mono">
+                  <span className="font-mono text-xs sm:text-sm">
                     {data.creditsUsed.toLocaleString()} / {data.creditsTotal.toLocaleString()}
                   </span>
                 </div>
@@ -92,26 +91,23 @@ export function ProviderCard({ provider, onDelete, onRefresh }: Props) {
               </div>
             )}
 
-            {/* OpenAI - Cost this month */}
             {data.usageThisMonth !== undefined && (
               <div>
                 <p className="text-zinc-400 text-sm">Usage This Month</p>
-                <p className="text-2xl font-bold font-mono">
+                <p className="text-xl sm:text-2xl font-bold font-mono">
                   ${data.usageThisMonth.toFixed(2)}
                   {data.currency && <span className="text-sm text-zinc-500 ml-1">{data.currency}</span>}
                 </p>
               </div>
             )}
 
-            {/* Balance */}
             {data.balance !== undefined && (
               <div>
                 <p className="text-zinc-400 text-sm">Balance</p>
-                <p className="text-2xl font-bold font-mono text-emerald-400">${data.balance.toFixed(2)}</p>
+                <p className="text-xl sm:text-2xl font-bold font-mono text-emerald-400">${data.balance.toFixed(2)}</p>
               </div>
             )}
 
-            {/* Details */}
             {data.details && (
               <div className="space-y-1">
                 {Object.entries(data.details).map(([key, value]) => (
@@ -123,7 +119,6 @@ export function ProviderCard({ provider, onDelete, onRefresh }: Props) {
               </div>
             )}
 
-            {/* Status indicator */}
             <div className="flex items-center gap-1 text-emerald-400 text-xs">
               <CheckCircle2 className="w-3 h-3" />
               Connected

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { encrypt } from "@/lib/crypto";
 
 interface Props {
   onClose: () => void;
@@ -27,10 +28,27 @@ export function AddProviderModal({ onClose, onAdded }: Props) {
     setLoading(true);
     setError("");
 
+    // Client-seitige Verschlüsselung: API Key wird VOR dem Senden verschlüsselt
+    const encPassword = sessionStorage.getItem("encryptionPassword");
+    if (!encPassword) {
+      setError("Encryption key not available. Please re-login.");
+      setLoading(false);
+      return;
+    }
+
+    let encryptedKey: string;
+    try {
+      encryptedKey = await encrypt(apiKey, encPassword);
+    } catch {
+      setError("Encryption failed");
+      setLoading(false);
+      return;
+    }
+
     const res = await fetch("/api/providers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, type, apiKey }),
+      body: JSON.stringify({ name, type, apiKey: encryptedKey }),
     });
 
     if (res.ok) {
@@ -42,9 +60,9 @@ export function AddProviderModal({ onClose, onAdded }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-        <div className="flex items-center justify-between mb-6">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-5 sm:mb-6">
           <h2 className="text-lg font-bold">Add Provider</h2>
           <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded-lg transition">
             <X className="w-5 h-5" />
@@ -92,6 +110,7 @@ export function AddProviderModal({ onClose, onAdded }: Props) {
               className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
               required
             />
+            <p className="text-xs text-zinc-500 mt-1">🔒 Verschlüsselt im Browser, Server sieht nie den Klartext</p>
           </div>
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
