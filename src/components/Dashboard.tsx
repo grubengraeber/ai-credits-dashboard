@@ -66,15 +66,15 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="bg-blue-600 p-1.5 sm:p-2 rounded-lg">
+      <header className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-xl sticky top-0 z-50 w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 min-w-0">
+            <div className="bg-blue-600 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
               <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <h1 className="text-base sm:text-xl font-bold">AI Credits</h1>
+            <h1 className="text-base sm:text-xl font-bold truncate">AI Credits</h1>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
             <select
               value={autoRefresh}
               onChange={(e) => setAutoRefresh(Number(e.target.value))}
